@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  links     Link[]
+}
+
+model Link {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  url       String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clicks    Int       @default(0)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@index([slug])
+  @@index([userId])
+}
