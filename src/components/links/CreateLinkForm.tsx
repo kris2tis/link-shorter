@@ -101,11 +101,11 @@ export function CreateLinkForm({ onCreated }: Props) {
 
     setLoading(true);
     try {
-      const data = await http.post("/api/links", payload);
+      const data = await http.post("/api/links", payload).then((data)=>data.data);
 
       queryClient.invalidateQueries({ queryKey: ["link-list"] });
       toast.success("لینک ساخته شد", { position: "bottom-center" });
-      setCreatedLink(data.link);
+      setCreatedLink(data?.link);
       setUrl("");
       setCustomSlug("");
       setExpiry("");

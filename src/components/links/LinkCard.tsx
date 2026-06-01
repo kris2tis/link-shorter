@@ -6,12 +6,12 @@ import {
   Check,
   Trash2,
   ExternalLink,
-  MousePointer,
-  Clock,
   RotateCcw,
   Eye,
 } from "lucide-react";
 import { getShortUrl, formatDate, isExpired } from "@/lib/utils";
+
+import { MutableRefObject } from "react";
 
 import { http } from "../../httpServices";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
@@ -31,23 +31,27 @@ interface Props {
   onDeleted: (link: Link) => void;
   onRestored: (link: Link) => void;
 }
-
-interface undoProps {
-  handleUndo: (id: string) => void;
-  progressIntervalRef: RefObject<HTMLInputElement | null>;
-  undoTimerRef: RefObject<HTMLInputElement | null>;
+interface UndoProps {
+  handleUndo: () => void;
+  progressIntervalRef: MutableRefObject<
+    ReturnType<typeof setInterval> | null
+  >;
+  undoTimerRef: MutableRefObject<
+    ReturnType<typeof setTimeout> | null
+  >;
   queryClient: QueryClient;
 }
-
 export function LinkCard({ link, onDeleted, onRestored }: Props) {
   const [copied, setCopied] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showUndo, setShowUndo] = useState(false);
 
-  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+  null
+);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
-    null,
-  );
+  null
+);
 
   const queryClient = useQueryClient();
   const expired = isExpired(link.expiresAt ? new Date(link.expiresAt) : null);
@@ -190,7 +194,7 @@ const Undo = ({
   progressIntervalRef,
   undoTimerRef,
   queryClient,
-}: undoProps) => {
+}: UndoProps) => {
   const [undoProgress, setUndoProgress] = useState(100);
   useEffect(() => {
     const start = Date.now();

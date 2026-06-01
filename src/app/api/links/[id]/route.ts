@@ -5,9 +5,13 @@ import { authOptions } from "@/lib/auth";
 
 export async function DELETE(
   _req: NextRequest,
-  { params },
+  {
+    params,
+  }: {
+    params: Promise<{id:string}>;
+  },
 ) {
-  const param = await params;
+const { id } = await params;
 
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -15,7 +19,7 @@ export async function DELETE(
   }
 
   const link = await prisma.link.findFirst({
-    where: { id: param.id, userId: session.user.id },
+    where: { id: id, userId: session.user.id },
   });
 
   if (!link) {
@@ -23,7 +27,7 @@ export async function DELETE(
   }
 
   await prisma.link.update({
-    where: { id: param.id },
+    where: { id: id },
     data: { deletedAt: new Date() },
   });
 
@@ -32,17 +36,21 @@ export async function DELETE(
 
 export async function PATCH(
   _req: NextRequest,
-  { params } 
+  {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
+  },
 ) {
-  const getParams= await params;
-  
+  const {id}= await params;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "احراز هویت نشده" }, { status: 401 });
   }
 
   const link = await prisma.link.findFirst({
-    where: { id: getParams.id, userId: session.user.id },
+    where: { id: id, userId: session.user.id },
   });
 
   if (!link) {
@@ -61,7 +69,7 @@ export async function PATCH(
   }
 
   await prisma.link.update({
-    where: { id: getParams.id },
+    where: { id: id },
     data: { deletedAt: null },
   });
 

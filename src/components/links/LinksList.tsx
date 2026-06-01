@@ -38,15 +38,15 @@ export function LinksList({ refreshTrigger }: Props) {
     queryFn: () => fetchLinks(),
   });
 
-  const handleDelete = (deletedLink) => {
+  const handleDelete = (deletedLink : any) => {
     setDeletedLink(deletedLink);
-    queryClient.setQueryData(["link-list"], (prev) => {
+    queryClient.setQueryData(["link-list"], (prev:Link[]) => {
       return prev?.filter((link) => link.id !== deletedLink.id);
     });
   };
 
-  const handleRestored = (restoredLink) => {
-    queryClient.setQueryData(["link-list"], (prev) => [
+  const handleRestored = (restoredLink:any) => {
+    queryClient.setQueryData(["link-list"], (prev:Link[]) => [
       restoredLink,
       ...(prev ?? []),
     ]);
@@ -87,7 +87,7 @@ export function LinksList({ refreshTrigger }: Props) {
       </div>
 
       <div className="space-y-3">
-        {links.map((link) => (
+        {links.map((link:Link) => (
           <LinkCard
             key={link?.id}
             link={link}
